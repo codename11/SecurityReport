@@ -7,6 +7,7 @@ use App\Main_Heading;
 use Illuminate\Http\Request;
 use \stdClass;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Schema;
 
 class Main_HeadingController extends Controller
 {
@@ -70,6 +71,11 @@ class Main_HeadingController extends Controller
             "requestAll" => $request->all(),
             "user" => auth()->user()
         );
+
+        Schema::connection('mysql')->create('tableName', function($table)
+        {
+            $table->increments('id');
+        });
 
         return response($response, 200);
 
