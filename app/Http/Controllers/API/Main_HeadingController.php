@@ -71,11 +71,11 @@ class Main_HeadingController extends Controller
             "requestAll" => $request->all(),
             "user" => auth()->user()
         );
-
-        Schema::connection('mysql')->create('tableName', function($table)
+        //Pre pravljenja tabele, proveriti po datumu koji treba biti unet u tabelu, da li vec postoji tabela sa tim datumom.
+        /*Schema::connection('mysql')->create('tableName', function($table)
         {
             $table->increments('id');
-        });
+        });*/
 
         return response($response, 200);
 
