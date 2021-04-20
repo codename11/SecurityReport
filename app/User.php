@@ -43,5 +43,33 @@ class User extends Authenticatable
     public function role(){
         return $this->belongsTo("App\Role", "role_id");
     }
+
+    public function isAdmin()
+    {
+        $user = User::find(auth()->user()->id);
+        $role = $user->role()->first()->name;
+
+        if($role==="admin"){
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+    }
+
+    public function isUser()
+    {
+        $user = User::find(auth()->user()->id);
+        $role = $user->role()->first()->name;
+
+        if($role==="user"){
+            return true;
+        }
+        else{
+            return false;
+        }
+        
+    }
     
 }

@@ -11,8 +11,10 @@ class Main_Heading extends Model
         "obj_name", "sec_comp_name", "set_date", "user_id"
     ];
 
+    protected $table = 'main_heading';
+
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo("App\User", "user_id", "id");
     }
 
 }
