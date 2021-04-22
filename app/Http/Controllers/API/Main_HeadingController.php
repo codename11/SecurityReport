@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use \stdClass;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
+use App\Calendar;
 
 class Main_HeadingController extends Controller
 {
@@ -17,8 +18,12 @@ class Main_HeadingController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function test(Request $request){
+    public function calendar(Request $request){
+
+        //Ovo bi trebalo da budu dodatna polja u ovoj tabeli.
         $validator = Validator::make($request->all(), [
+            "employee_names" => "required|array|min:1",
+            "employee_names.*" => "required|string|distinct|min:1",
             "obj_name" => "required|max:255",
             "sec_comp_name" => "required|max:255",
             "set_date" => "required|date|after_or_equal:today",
@@ -34,6 +39,7 @@ class Main_HeadingController extends Controller
         }
 
         $obj = new stdClass();
+        $obj->employee_names = $request->employee_names;
         $str = strtotime($request->set_date);
         $obj->monthNum = date("m", $str);
         $obj->month = date("F", $str);
@@ -44,27 +50,18 @@ class Main_HeadingController extends Controller
         $obj->dayNamesInMonthWithNums = [];
         for ($i = 1; $i <= $numOfDays; $i++) {
 
-            $obj->dayNamesInMonthWithNums[$i-1] = new stdClass();
-            $obj->dayNamesInMonthWithNums[$i-1]->dayName = date("l", strtotime($i."-".$obj->monthNum."-".$obj->year));
-            $obj->dayNamesInMonthWithNums[$i-1]->dayNum = $i;
+            $obj->dayNamesInMonthWithNums[$i-1] = $i."/".substr(date("l", strtotime($i."-".$obj->monthNum."-".$obj->year)), 0, 3);
             
         }
 
         $response = array(
             "message" => "bravo",
             "obj" => $obj,
-            "test" => $obj->dayNamesInMonthWithNums[0],
-            "requestAll" => $request->all(),
-            "user" => auth()->user()
+            "user" => auth()->user(),
         );
-        //Pre pravljenja tabele, proveriti po datumu koji treba biti unet u tabelu, da li vec postoji tabela sa tim datumom.
-        /*Schema::connection('mysql')->create('tableName', function($table)
-        {
-            $table->increments('id');
-            $table->timestamps();
-        });*/
 
         return response($response, 200);
+
     }
 
     public function index(Request $request)
