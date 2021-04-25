@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use \stdClass;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
-use App\Calendar;
 
 class Main_HeadingController extends Controller
 {
@@ -17,52 +16,6 @@ class Main_HeadingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
-    public function calendar(Request $request){
-
-        //Ovo bi trebalo da budu dodatna polja u ovoj tabeli.
-        $validator = Validator::make($request->all(), [
-            "employee_names" => "required|array|min:1",
-            "employee_names.*" => "required|string|distinct|min:1",
-            "obj_name" => "required|max:255",
-            "sec_comp_name" => "required|max:255",
-            "set_date" => "required|date|after_or_equal:today",
-        ]);
-
-        if($validator->fails()){
-
-            $response["error"] = $validator->errors();
-            $response["message"] = "Validation Error";
-
-            return response($response);
-
-        }
-
-        $obj = new stdClass();
-        $obj->employee_names = $request->employee_names;
-        $str = strtotime($request->set_date);
-        $obj->monthNum = date("m", $str);
-        $obj->month = date("F", $str);
-        $obj->year = date("Y", $str);
-
-        $numOfDays=cal_days_in_month(CAL_GREGORIAN,$obj->monthNum,$obj->year);
-
-        $obj->dayNamesInMonthWithNums = [];
-        for ($i = 1; $i <= $numOfDays; $i++) {
-
-            $obj->dayNamesInMonthWithNums[$i-1] = $i."/".substr(date("l", strtotime($i."-".$obj->monthNum."-".$obj->year)), 0, 3);
-            
-        }
-
-        $response = array(
-            "message" => "bravo",
-            "obj" => $obj,
-            "user" => auth()->user(),
-        );
-
-        return response($response, 200);
-
-    }
 
     public function index(Request $request)
     {

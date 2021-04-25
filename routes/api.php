@@ -21,7 +21,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/register', 'Api\AuthController@register');
 Route::post('/login', 'Api\AuthController@login');
 
-Route::post('/calendar', 'Api\Main_HeadingController@calendar')->middleware('auth:api');
+Route::post('/calendar', 'Api\CalendarController@index')->middleware('auth:api');
 Route::post('/main_heading_create', 'Api\Main_HeadingController@store')->middleware('auth:api');
 Route::patch('/main_heading_update', 'Api\Main_HeadingController@update')->middleware('auth:api');
 Route::delete('/main_heading_delete', 'Api\Main_HeadingController@destroy')->middleware('auth:api');
