@@ -20,4 +20,8 @@ class Calendar extends Model
         return $this->belongsTo("App\User", "user_id", "id");
     }
 
+    public function main_heading(){
+        return $this->belongsTo("App\Main_Heading", "mh_id", "id");
+    }
+
 }
