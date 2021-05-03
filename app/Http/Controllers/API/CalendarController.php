@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use \stdClass;
 use App\Calendar;
 use App\Main_Heading;
+use App\User;
 
 class CalendarController extends Controller
 {
@@ -78,9 +79,8 @@ class CalendarController extends Controller
         if($request->ajax()){
             //Ovo bi trebalo da budu dodatna polja u ovoj tabeli.
             $validator = Validator::make($request->all(), [
-                "employee_names" => "required|array|min:1",
-                "employee_names.*" => "required|string|distinct|min:1",
                 "mh_id" => "required|integer",
+                "employee_shifts" => "required|array",
             ]);
 
             if($validator->fails()){
@@ -110,20 +110,42 @@ class CalendarController extends Controller
                     
                 }
 
-                $calendar = new Calendar;
-                $calendar->names = $request->employee_names;
-                $calendar->daynums = $obj->dayNamesInMonthWithNums;
-                $calendar->user_id = auth()->user()->id;
-                $calendar->mh_id = $request->mh_id;
-                $calendar->save();
+                $cal = null;
 
-                $cal = Calendar::with("user", "main_heading")->findOrFail($calendar->id);
-                $response = array(
-                    "message" => "You created a calendar!",
-                    "cal" => $cal,
-                );
+                if($cal){
 
-                return response($response, 200);
+                    $response = array(
+                        "message" => "Calendar with main_heading id = ".$request->mh_id." already exists!",
+                    );
+    
+                    return response($response, 200);
+
+                }
+                else{
+                    $t1 = "";
+                    /*if(count($request->employee_shifts["shifts"]) > count($obj->dayNamesInMonthWithNums)){
+                        $t1 = "yes";
+                    }
+                    else{
+                        $t1="no";
+                    }*/
+
+                    $calendar = new Calendar;
+                    $calendar->employee_shifts = $request->employee_shifts;
+                    $calendar->daynums = $obj->dayNamesInMonthWithNums;
+                    $calendar->user_id = auth()->user()->id;
+                    $calendar->mh_id = $request->mh_id;
+                    $calendar->save();
+
+                    $cal = Calendar::with("user", "main_heading")->findOrFail($calendar->id);
+                    $response = array(
+                        "message" => "You created a calendar!",
+                        "cal" => $cal,
+                    );
+
+                    return response($response, 200);
+
+                }
 
             }
             else{

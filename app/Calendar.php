@@ -12,7 +12,7 @@ class Calendar extends Model
     ];
 
     protected $casts = [
-        "names" => "array",
+        "employee_shifts" => "array",
         "daynums" => "array",
     ];
 

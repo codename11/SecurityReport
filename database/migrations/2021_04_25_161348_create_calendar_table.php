@@ -15,7 +15,7 @@ class CreateCalendarTable extends Migration
     {
         Schema::create('calendar', function (Blueprint $table) {
             $table->id();
-            $table->text("names");
+            $table->text("employee_shifts");
             $table->text("daynums");
             
             $table->unsignedBigInteger('user_id');
