@@ -301,14 +301,28 @@ class CalendarController extends Controller
 
             }
 
-            $calendar = Calendar::findOrFail($request->id);
-            $calendar->delete();
+            $calendar = Calendar::find($request->id) ? Calendar::find($request->id) : null;
 
-            $response = array(
-                "message" => "Calendar succefully deleted.",
-            );
-            
-            return response()->json($response);
+            if($calendar){
+
+                $calendar->delete();
+
+                $response = array(
+                    "message" => "Calendar succefully deleted.",
+                );
+                
+                return response()->json($response);
+
+            }
+            else{
+
+                $response = array(
+                    "message" => "Can't find Calendar.",
+                );
+                
+                return response()->json($response);
+
+            }
 
         }
         else{
