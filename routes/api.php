@@ -30,3 +30,5 @@ Route::get('/main_heading_list', 'Api\Main_HeadingController@index')->middleware
 Route::post('/calendar_create', 'Api\CalendarController@store')->middleware('auth:api');
 Route::get('/calendar_list', 'Api\CalendarController@index')->middleware('auth:api');
 Route::get('/calendar_show', 'Api\CalendarController@show')->middleware('auth:api');
+Route::patch('/calendar_update', 'Api\CalendarController@update')->middleware('auth:api');
+Route::delete('/calendar_delete', 'Api\CalendarController@destroy')->middleware('auth:api');
