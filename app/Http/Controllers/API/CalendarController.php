@@ -15,6 +15,7 @@ class CalendarController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Calendar::class);
+        //test
         if($request->ajax()){
             
             $calendars = Calendar::all() ? Calendar::with("user", "main_heading")->get() : null;
