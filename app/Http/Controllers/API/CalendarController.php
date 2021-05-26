@@ -44,11 +44,19 @@ class CalendarController extends Controller
             
             $calendar = Calendar::find($request->id) ? Calendar::with("user", "main_heading")->find($request->id) : null;
             
+            $employee_ids = [];
+            for($i=0;$i<count($calendar->employee_shifts);$i++){
+
+                $employee_ids[$i] = $calendar->employee_shifts[$i]["employee_id"];
+
+            }
+            $calendar->employees = User::findMany($employee_ids);
+            
             if($calendar){
 
                 $response = array(
                     "message" => "Found your calendar.",
-                    "calendar" => $calendar
+                    "calendar" => $calendar,
                 );
                 
                 return response()->json($response);
@@ -108,22 +116,11 @@ class CalendarController extends Controller
             }
             $main_heading = Main_Heading::find($request->mh_id) ? Main_Heading::find($request->mh_id) : null;
 
+            $dateHelper = new DateHelper($request->set_date);
+            $setDate = $dateHelper->get_date();
+            $obj = $dateHelper->datenames();
+
             if($main_heading){
-
-                $obj = new stdClass();
-                $str = strtotime($main_heading->set_date);
-                $obj->monthNum = date("m", $str);
-                $obj->month = date("F", $str);
-                $obj->year = date("Y", $str);
-
-                $numOfDays=cal_days_in_month(CAL_GREGORIAN,$obj->monthNum,$obj->year);
-
-                $obj->dayNamesInMonthWithNums = [];
-                for ($i = 1; $i <= $numOfDays; $i++) {
-
-                    $obj->dayNamesInMonthWithNums[$i-1] = $i."/".substr(date("l", strtotime($i."-".$obj->monthNum."-".$obj->year)), 0, 3);
-                    
-                }
 
                 //First check. Check if calendar already exists.
                 $checkIfcalExists = Calendar::where("mh_id", "=", $request->mh_id)->first();

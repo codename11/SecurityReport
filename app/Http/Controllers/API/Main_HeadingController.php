@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use \stdClass;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
+use App\Http\Controllers\API\DateHelper;
 
 class Main_HeadingController extends Controller
 {
@@ -24,6 +25,7 @@ class Main_HeadingController extends Controller
         if($request->ajax()){
 
             $main_headings = Main_Heading::with("user")->get();
+            
             $response = array(
                 "message" => "Displaying all Main Headings",
                 "main_headings" => $main_headings
@@ -68,22 +70,26 @@ class Main_HeadingController extends Controller
 
             }
 
-            $ifDate = Main_Heading::where("set_date", "=", $request->set_date);
-            $dateStr1 = $ifDate && $ifDate->first(["set_date"]) ? Main_Heading::where("set_date", "=", $request->set_date)->first(["set_date"])->set_date : null;
-            $dateStr2 = $request->set_date;
+            $dateHelper = new DateHelper($request->set_date);
+            $setDate = $dateHelper->get_date();
+
+            $ifDate = Main_Heading::where("set_date", "=", $setDate);
+            $dateStr1 = $ifDate && $ifDate->first(["set_date"]) ? Main_Heading::where("set_date", "=", $setDate)->first(["set_date"])->set_date : null;
+            $dateStr2 = $setDate;
             
             if($dateStr1!=$dateStr2){
 
                 $main_heading = new Main_Heading;
                 $main_heading->obj_name = $request->obj_name;
                 $main_heading->sec_comp_name = $request->sec_comp_name;
-                $main_heading->set_date = $request->set_date;
+                $main_heading->set_date = $setDate;
                 $main_heading->user_id = auth()->user()->id;
                 $main_heading->save();
                 
                 $response = array(
-                    "message" => "Main heading is created for ".$request->set_date." date for object ".$request->obj_name." by company ".$request->sec_comp_name,
+                    "message" => "Main heading is created for ".$setDate." date for object ".$request->obj_name." by company ".$request->sec_comp_name,
                     "main_heading" => $main_heading->with("user")->get(),
+                    "setDate" => $setDate
                 );
                 
                 return response()->json($response);

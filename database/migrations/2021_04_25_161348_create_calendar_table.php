@@ -18,6 +18,9 @@ class CreateCalendarTable extends Migration
             $table->text("employee_shifts");
             $table->text("daynums");
             
+            $table->unsignedBigInteger('mh_id')->nullable();
+            $table->foreign("mh_id")->references("id")->on("main_heading")->onUpdate('cascade')->onDelete('cascade');
+            
             $table->unsignedBigInteger('user_id');
             $table->foreign("user_id")->references("id")->on("users")->onUpdate('cascade')->onDelete('cascade');
             
